@@ -11,7 +11,11 @@ const PORT = process.env.PORT || 3000;
 
 app.get("/",(req,res) => {
     res.send("Bot is running!")
-})
+});
+
+app.listen(PORT, () => {
+    console.log(`Server is happily running at http://localhost:${PORT}`);
+});
 
 bot.start(ctx => {
     ctx.reply("Welcome to chat with google bot");
@@ -34,7 +38,3 @@ bot.launch()
 
 process.once('SIGINT', () => bot.stop('SIGINT'));
 process.once('SIGTERM', () => bot.stop('SIGTERM'));
-
-app.listen(PORT, () => {
-    console.log(`Server is happily running at http://localhost:${PORT}`);
-});
