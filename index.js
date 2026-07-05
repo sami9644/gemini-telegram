@@ -4,10 +4,10 @@ const gem = require("./gemini"); // Make sure your gemini.js returns the text fr
 const marked = require('marked');
 const { parse } = require("dotenv");
 const express = require('express')
-
 const bot = new Telegraf(process.env.BOT_TOKEN);
 const app = express();
 const PORT = process.env.PORT || 3000;
+const url = 'https://gemini-telegram-qmil.onrender.com'
 
 app.get("/",(req,res) => {
     res.send("Bot is running!")
@@ -17,18 +17,21 @@ app.listen(PORT, () => {
     console.log(`Server is happily running at http://localhost:${PORT}`);
 });
 
-bot.start(ctx => {
-    ctx.reply("Welcome to chat with google bot");
+bot.start(async (ctx) => {
+    await ctx.sendChatAction('typing');
+    let automatedWelcome = await gem.run('introduce yourself and about what can you do?');
+    await ctx.reply(automatedWelcome,{parse_mode:"HTML"});
 });
 
 bot.on('text', async (ctx) => {
+    await ctx.sendChatAction('typing');
     try {
         let gemResponse = await gem.run(ctx.message.text);
         // let parsedResponse = await marked.parse(gemResponse)
         await ctx.reply(gemResponse,{parse_mode : "HTML"});
     } catch (error) {
         console.error("Error handling message:", error);
-        ctx.reply("Sorry, something went wrong processing that.");
+        await ctx.reply("Sorry, something went wrong processing that.");
     }
 });
 
